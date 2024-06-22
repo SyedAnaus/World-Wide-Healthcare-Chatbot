@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Chat with our Healthcare Bot</h1>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type a message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput })
+            });
+            const data = await response.json();
+            if (data.reply) {
+                const chatBox = document.getElementById('chat-box');
+                const userMessage = document.createElement('div');
+                userMessage.className = 'user-message';
+                userMessage.textContent = 'You: ' + userInput;
+                const botReply = document.createElement('div');
+                botReply.className = 'bot-reply';
+                botReply.textContent = 'Bot: ' + data.reply;
+                chatBox.appendChild(userMessage);
+                chatBox.appendChild(botReply);
+                document.getElementById('user-input').value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
